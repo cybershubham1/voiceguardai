@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import FileUpload from '@/components/FileUpload';
 import ScanningAnimation from '@/components/ScanningAnimation';
 import ResultCard from '@/components/ResultCard';
+import LiveDetection from '@/components/LiveDetection';
 import { useToast } from '@/components/ui/use-toast';
 import { Loader2, Shield, ArrowRight } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type DetectionResult = {
   type: 'authentic' | 'deepfake' | 'uncertain';
@@ -127,7 +129,6 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="relative overflow-hidden">
-        {/* Gradient background */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background" />
         
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
@@ -146,34 +147,47 @@ const Index = () => {
 
           <div className="max-w-3xl mx-auto space-y-8">
             <div className="bg-secondary/50 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-gray-800">
-              <FileUpload
-                onFileSelect={analyzeContent}
-                className="bg-background/50 hover:bg-background/70 transition-all duration-300"
-              />
-
-              {isAnalyzing && (
-                <div className="relative h-64 mt-8 bg-background/50 rounded-xl overflow-hidden backdrop-blur-sm">
-                  <ScanningAnimation />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex flex-col items-center gap-4">
-                      <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                      <p className="text-gray-400">Analyzing your content...</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {result && (
-                <div className="mt-8">
-                  <ResultCard
-                    type={result.type}
-                    confidence={result.confidence}
-                    details={result.details}
-                    indicators={result.indicators}
-                    className="animate-in fade-in duration-500"
+              <Tabs defaultValue="upload" className="w-full">
+                <TabsList className="grid w-full grid-cols-2 mb-8">
+                  <TabsTrigger value="upload">File Upload</TabsTrigger>
+                  <TabsTrigger value="live">Live Detection</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="upload">
+                  <FileUpload
+                    onFileSelect={analyzeContent}
+                    className="bg-background/50 hover:bg-background/70 transition-all duration-300"
                   />
-                </div>
-              )}
+
+                  {isAnalyzing && (
+                    <div className="relative h-64 mt-8 bg-background/50 rounded-xl overflow-hidden backdrop-blur-sm">
+                      <ScanningAnimation />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="flex flex-col items-center gap-4">
+                          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                          <p className="text-gray-400">Analyzing your content...</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {result && (
+                    <div className="mt-8">
+                      <ResultCard
+                        type={result.type}
+                        confidence={result.confidence}
+                        details={result.details}
+                        indicators={result.indicators}
+                        className="animate-in fade-in duration-500"
+                      />
+                    </div>
+                  )}
+                </TabsContent>
+                
+                <TabsContent value="live">
+                  <LiveDetection />
+                </TabsContent>
+              </Tabs>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
