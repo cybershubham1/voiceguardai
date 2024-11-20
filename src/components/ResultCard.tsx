@@ -25,17 +25,17 @@ const ResultCard = ({ type, confidence, details, indicators, className }: Result
   const getBackground = () => {
     switch (type) {
       case 'authentic':
-        return 'bg-accent/10';
+        return 'bg-accent/10 border-accent/20';
       case 'deepfake':
-        return 'bg-danger/10';
+        return 'bg-danger/10 border-danger/20';
       default:
-        return 'bg-warning/10';
+        return 'bg-warning/10 border-warning/20';
     }
   };
 
   return (
     <div className={cn(
-      'rounded-lg p-6 transition-all duration-300',
+      'rounded-xl p-6 transition-all duration-300 border backdrop-blur-sm',
       getBackground(),
       className
     )}>
@@ -44,13 +44,13 @@ const ResultCard = ({ type, confidence, details, indicators, className }: Result
         <div className="flex-1">
           <h3 className="text-xl font-semibold capitalize flex items-center gap-2">
             {type}
-            <span className="text-sm font-normal text-gray-600">
+            <span className="text-sm font-normal text-gray-400">
               ({confidence}% confidence)
             </span>
           </h3>
           
           <div className="mt-4 mb-6">
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div className="w-full bg-gray-800 rounded-full h-2.5">
               <div
                 className={cn(
                   "h-2.5 rounded-full transition-all duration-500",
@@ -61,13 +61,13 @@ const ResultCard = ({ type, confidence, details, indicators, className }: Result
             </div>
           </div>
 
-          <p className="text-gray-700 mb-4">{details}</p>
+          <p className="text-gray-300 mb-4">{details}</p>
 
           <div className="space-y-2">
-            <h4 className="font-medium text-gray-900">Analysis Indicators:</h4>
+            <h4 className="font-medium text-gray-200">Analysis Indicators:</h4>
             <ul className="space-y-2">
               {indicators.map((indicator, index) => (
-                <li key={index} className="flex items-center gap-2 text-sm text-gray-600">
+                <li key={index} className="flex items-center gap-2 text-sm text-gray-400">
                   <CheckCircle2 className="w-4 h-4 text-accent" />
                   {indicator}
                 </li>

@@ -29,23 +29,25 @@ const FileUpload = ({ onFileSelect, className }: FileUploadProps) => {
     <div
       {...getRootProps()}
       className={cn(
-        'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-all duration-200',
-        isDragActive ? 'border-accent bg-accent/5' : 'border-gray-300 hover:border-accent',
+        'border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-300',
+        isDragActive ? 'border-primary bg-primary/5' : 'border-gray-700 hover:border-primary',
         className
       )}
     >
       <input {...getInputProps()} />
       <div className="flex flex-col items-center gap-4">
-        <Upload className="w-12 h-12 text-gray-400" />
+        <div className="p-4 rounded-full bg-primary/10">
+          <Upload className="w-8 h-8 text-primary" />
+        </div>
         <div>
           <p className="text-lg font-medium">
             {isDragActive ? 'Drop your file here' : 'Drag & drop your file here'}
           </p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-400 mt-1">
             or click to select a file
           </p>
         </div>
-        <div className="text-xs text-gray-400 mt-2">
+        <div className="text-xs text-gray-500 mt-2">
           Supports images, videos, audio files, and text
         </div>
       </div>

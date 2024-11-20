@@ -22,18 +22,18 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: "#0F172A",
+        foreground: "#F8FAFC",
         primary: {
-          DEFAULT: "#64748b",
-          foreground: "#f8fafc",
+          DEFAULT: "#6366F1",
+          foreground: "#ffffff",
         },
         secondary: {
-          DEFAULT: "#f8fafc",
-          foreground: "#64748b",
+          DEFAULT: "#1E293B",
+          foreground: "#F8FAFC",
         },
         accent: {
-          DEFAULT: "#10b981",
+          DEFAULT: "#818CF8",
           foreground: "#ffffff",
         },
         warning: {
