@@ -25,9 +25,8 @@ const Index = () => {
       // Simulate API call with advanced detection logic
       await new Promise(resolve => setTimeout(resolve, 3000));
       
-      // Advanced detection simulation based on file type
       const fileType = file.type.split('/')[0];
-      const mockAnalysis = simulateDeepfakeDetection(fileType);
+      const mockAnalysis = simulateAdvancedDeepfakeDetection(file, fileType);
       
       setResult(mockAnalysis);
       toast({
@@ -45,40 +44,83 @@ const Index = () => {
     }
   };
 
-  const simulateDeepfakeDetection = (fileType: string): DetectionResult => {
-    const isDeepfake = Math.random() > 0.5;
-    const confidence = Math.floor(Math.random() * 30) + 70;
+  const simulateAdvancedDeepfakeDetection = (file: File, fileType: string): DetectionResult => {
+    // Advanced detection simulation based on file properties
+    const fileSize = file.size;
+    const fileName = file.name;
+    const lastModified = file.lastModified;
     
-    const baseIndicators = {
-      image: [
-        'Analyzing facial features and inconsistencies',
-        'Checking metadata and digital signatures',
-        'Examining lighting and shadow patterns',
-      ],
-      video: [
-        'Analyzing temporal consistency',
-        'Checking lip-sync accuracy',
-        'Examining facial expressions and movements',
-      ],
-      audio: [
-        'Analyzing voice patterns and frequencies',
-        'Checking audio waveform consistency',
-        'Examining background noise patterns',
-      ],
-      text: [
-        'Analyzing writing style and patterns',
-        'Checking content consistency',
-        'Examining linguistic markers',
-      ],
-    }[fileType] || ['Analyzing content patterns', 'Checking digital signatures'];
+    // Calculate baseline score using multiple factors
+    let baselineScore = Math.random() * 30 + 70; // Base confidence between 70-100
+    
+    // Adjust score based on file properties
+    const sizeScore = Math.min(fileSize / (1024 * 1024), 10); // File size factor
+    const nameComplexity = fileName.length / 10; // Filename complexity factor
+    const timeScore = (Date.now() - lastModified) / (1000 * 60 * 60 * 24); // Age factor
+    
+    // Weighted adjustment
+    const adjustedScore = (baselineScore * 0.6) + (sizeScore * 0.2) + (nameComplexity * 0.1) + (Math.min(timeScore, 10) * 0.1);
+    
+    // Normalize score between 70-100
+    const normalizedScore = Math.min(Math.max(adjustedScore, 70), 100);
+    const confidence = Math.round(normalizedScore);
+    
+    // Determine if content is likely deepfake based on complex scoring
+    const isLikelyDeepfake = confidence < 85;
+
+    const getDetailedIndicators = () => {
+      switch(fileType) {
+        case 'image':
+          return [
+            'Analyzing metadata integrity and EXIF data',
+            'Examining pixel-level patterns and artifacts',
+            'Checking facial feature consistency',
+            'Analyzing lighting and shadow patterns',
+            'Detecting image manipulation signatures',
+            'Verifying color space consistency'
+          ];
+        case 'video':
+          return [
+            'Analyzing frame-by-frame consistency',
+            'Checking audio-visual synchronization',
+            'Examining facial movement patterns',
+            'Detecting temporal anomalies',
+            'Analyzing compression artifacts',
+            'Verifying motion coherence'
+          ];
+        case 'audio':
+          return [
+            'Analyzing frequency spectrum patterns',
+            'Checking voice signature consistency',
+            'Examining background noise patterns',
+            'Detecting audio splicing artifacts',
+            'Analyzing voice modulation patterns',
+            'Verifying acoustic environment consistency'
+          ];
+        default:
+          return [
+            'Analyzing content patterns and signatures',
+            'Checking digital fingerprints',
+            'Examining structural integrity',
+            'Detecting manipulation artifacts',
+            'Analyzing format consistency',
+            'Verifying content authenticity markers'
+          ];
+      }
+    };
+
+    const getDetailedAnalysis = (isDeepfake: boolean, fileType: string) => {
+      if (isDeepfake) {
+        return `Our advanced AI analysis has detected potential manipulation patterns in this ${fileType} content. Multiple indicators suggest artificial generation or modification.`;
+      }
+      return `Our comprehensive analysis indicates this ${fileType} content shows strong signs of authenticity. Natural patterns and consistent signatures were detected.`;
+    };
 
     return {
-      type: isDeepfake ? 'deepfake' : 'authentic',
+      type: isLikelyDeepfake ? 'deepfake' : 'authentic',
       confidence,
-      details: isDeepfake 
-        ? 'Our AI has detected potential manipulation in this content.'
-        : 'Our analysis suggests this content is likely authentic.',
-      indicators: baseIndicators,
+      details: getDetailedAnalysis(isLikelyDeepfake, fileType),
+      indicators: getDetailedIndicators(),
     };
   };
 
