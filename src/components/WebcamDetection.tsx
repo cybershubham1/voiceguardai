@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import Webcam from 'react-webcam';
 import { Button } from '@/components/ui/button';
 import { Camera, Loader2 } from 'lucide-react';
@@ -15,10 +15,38 @@ const WebcamDetection = () => {
   const videoConstraints = {
     width: 1280,
     height: 720,
-    facingMode: "user"
+    facingMode: "user",
+    aspectRatio: 1.777777778
   };
 
+  useEffect(() => {
+    // Check if the browser supports getUserMedia
+    if (!navigator.mediaDevices?.getUserMedia) {
+      toast({
+        variant: "destructive",
+        title: "Browser Error",
+        description: "Your browser doesn't support camera access.",
+      });
+      return;
+    }
+
+    // Request camera access on component mount
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(() => {
+        console.log("Camera permission granted");
+      })
+      .catch((err) => {
+        console.error("Camera permission error:", err);
+        toast({
+          variant: "destructive",
+          title: "Camera Error",
+          description: "Failed to access camera. Please ensure permissions are granted.",
+        });
+      });
+  }, [toast]);
+
   const handleUserMedia = () => {
+    console.log("Camera stream connected successfully");
     setCameraReady(true);
     toast({
       title: "Camera Connected",
@@ -26,11 +54,12 @@ const WebcamDetection = () => {
     });
   };
 
-  const handleUserMediaError = () => {
+  const handleUserMediaError = (err: string | DOMException) => {
+    console.error("Camera error:", err);
     toast({
       variant: "destructive",
       title: "Camera Error",
-      description: "Unable to access camera. Please check your permissions.",
+      description: "Unable to access camera. Please check your permissions and refresh the page.",
     });
   };
 
@@ -88,6 +117,7 @@ const WebcamDetection = () => {
           onUserMedia={handleUserMedia}
           onUserMediaError={handleUserMediaError}
           className="w-full h-full"
+          mirrored={true}
         />
         <div className="absolute bottom-4 right-4">
           <Button
