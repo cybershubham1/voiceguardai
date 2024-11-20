@@ -3,9 +3,10 @@ import FileUpload from '@/components/FileUpload';
 import ScanningAnimation from '@/components/ScanningAnimation';
 import ResultCard from '@/components/ResultCard';
 import LiveDetection from '@/components/LiveDetection';
+import AnalysisTypes from '@/components/AnalysisTypes';
 import { useToast } from '@/components/ui/use-toast';
-import { Loader2, Shield, ArrowRight } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, Shield } from 'lucide-react';
 
 type DetectionResult = {
   type: 'authentic' | 'deepfake' | 'uncertain';
@@ -24,12 +25,8 @@ const Index = () => {
     setResult(null);
 
     try {
-      // Simulate API call with advanced detection logic
       await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      const fileType = file.type.split('/')[0];
-      const mockAnalysis = simulateAdvancedDeepfakeDetection(file, fileType);
-      
+      const mockAnalysis = simulateAdvancedDeepfakeDetection(file);
       setResult(mockAnalysis);
       toast({
         title: 'Analysis Complete',
@@ -46,31 +43,12 @@ const Index = () => {
     }
   };
 
-  const simulateAdvancedDeepfakeDetection = (file: File, fileType: string): DetectionResult => {
-    // Advanced detection simulation based on file properties
-    const fileSize = file.size;
-    const fileName = file.name;
-    const lastModified = file.lastModified;
-    
-    // Calculate baseline score using multiple factors
-    let baselineScore = Math.random() * 30 + 70; // Base confidence between 70-100
-    
-    // Adjust score based on file properties
-    const sizeScore = Math.min(fileSize / (1024 * 1024), 10); // File size factor
-    const nameComplexity = fileName.length / 10; // Filename complexity factor
-    const timeScore = (Date.now() - lastModified) / (1000 * 60 * 60 * 24); // Age factor
-    
-    // Weighted adjustment
-    const adjustedScore = (baselineScore * 0.6) + (sizeScore * 0.2) + (nameComplexity * 0.1) + (Math.min(timeScore, 10) * 0.1);
-    
-    // Normalize score between 70-100
-    const normalizedScore = Math.min(Math.max(adjustedScore, 70), 100);
-    const confidence = Math.round(normalizedScore);
-    
-    // Determine if content is likely deepfake based on complex scoring
+  const simulateAdvancedDeepfakeDetection = (file: File): DetectionResult => {
+    const fileType = file.type.split('/')[0];
+    const confidence = Math.random() * 30 + 70;
     const isLikelyDeepfake = confidence < 85;
 
-    const getDetailedIndicators = () => {
+    const getIndicators = () => {
       switch(fileType) {
         case 'image':
           return [
@@ -101,28 +79,23 @@ const Index = () => {
           ];
         default:
           return [
-            'Analyzing content patterns and signatures',
+            'Analyzing content patterns',
             'Checking digital fingerprints',
             'Examining structural integrity',
             'Detecting manipulation artifacts',
             'Analyzing format consistency',
-            'Verifying content authenticity markers'
+            'Verifying content authenticity'
           ];
       }
     };
 
-    const getDetailedAnalysis = (isDeepfake: boolean, fileType: string) => {
-      if (isDeepfake) {
-        return `Our advanced AI analysis has detected potential manipulation patterns in this ${fileType} content. Multiple indicators suggest artificial generation or modification.`;
-      }
-      return `Our comprehensive analysis indicates this ${fileType} content shows strong signs of authenticity. Natural patterns and consistent signatures were detected.`;
-    };
-
     return {
       type: isLikelyDeepfake ? 'deepfake' : 'authentic',
-      confidence,
-      details: getDetailedAnalysis(isLikelyDeepfake, fileType),
-      indicators: getDetailedIndicators(),
+      confidence: Math.round(confidence),
+      details: isLikelyDeepfake 
+        ? `Our analysis indicates potential manipulation in this ${fileType} content. Multiple indicators suggest artificial generation or modification.`
+        : `Our analysis indicates this ${fileType} content shows strong signs of authenticity. Natural patterns and consistent signatures were detected.`,
+      indicators: getIndicators(),
     };
   };
 
@@ -190,19 +163,7 @@ const Index = () => {
               </Tabs>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {['Audio', 'Video', 'Text'].map((type) => (
-                <div key={type} className="bg-secondary/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800">
-                  <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-                    {type} Detection
-                    <ArrowRight className="w-4 h-4" />
-                  </h3>
-                  <p className="text-sm text-gray-400">
-                    Advanced {type.toLowerCase()} analysis for deepfake detection
-                  </p>
-                </div>
-              ))}
-            </div>
+            <AnalysisTypes />
           </div>
         </div>
       </div>
