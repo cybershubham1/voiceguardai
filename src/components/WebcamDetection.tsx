@@ -9,7 +9,30 @@ const WebcamDetection = () => {
   const webcamRef = useRef<Webcam>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [isCameraReady, setCameraReady] = useState(false);
   const { toast } = useToast();
+
+  const videoConstraints = {
+    width: 1280,
+    height: 720,
+    facingMode: "user"
+  };
+
+  const handleUserMedia = () => {
+    setCameraReady(true);
+    toast({
+      title: "Camera Connected",
+      description: "Your camera is now ready for analysis.",
+    });
+  };
+
+  const handleUserMediaError = () => {
+    toast({
+      variant: "destructive",
+      title: "Camera Error",
+      description: "Unable to access camera. Please check your permissions.",
+    });
+  };
 
   const analyzeFrame = useCallback(async () => {
     if (!webcamRef.current) return;
@@ -61,12 +84,15 @@ const WebcamDetection = () => {
           ref={webcamRef}
           audio={false}
           screenshotFormat="image/jpeg"
+          videoConstraints={videoConstraints}
+          onUserMedia={handleUserMedia}
+          onUserMediaError={handleUserMediaError}
           className="w-full h-full"
         />
         <div className="absolute bottom-4 right-4">
           <Button
             onClick={analyzeFrame}
-            disabled={isAnalyzing}
+            disabled={isAnalyzing || !isCameraReady}
             className="flex items-center gap-2"
           >
             {isAnalyzing ? (
@@ -78,6 +104,13 @@ const WebcamDetection = () => {
           </Button>
         </div>
       </div>
+
+      {!isCameraReady && (
+        <div className="text-center p-4 bg-secondary/50 rounded-lg">
+          <p className="text-gray-400">Waiting for camera access...</p>
+          <p className="text-sm text-gray-500 mt-2">Please allow camera permissions when prompted</p>
+        </div>
+      )}
 
       {result && (
         <ResultCard
