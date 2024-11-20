@@ -26,15 +26,18 @@ const analysisTypes = [
 
 const AnalysisTypes = () => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
       {analysisTypes.map(({ type, icon: Icon, description }) => (
-        <div key={type} className="bg-secondary/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800">
+        <div 
+          key={type} 
+          className="bg-secondary/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800 hover:border-primary/50 transition-colors duration-300"
+        >
           <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
-            <Icon className="w-5 h-5" />
+            <Icon className="w-5 h-5 text-primary" />
             {type} Detection
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 text-accent" />
           </h3>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-gray-400 leading-relaxed">
             {description}
           </p>
         </div>
