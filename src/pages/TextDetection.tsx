@@ -38,7 +38,7 @@ const TextDetection = () => {
           "Structural analysis completion",
           "Linguistic marker detection"
         ]
-      } as const;
+      };
 
       setResult(mockResult);
     } finally {
