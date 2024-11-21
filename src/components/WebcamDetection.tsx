@@ -18,6 +18,26 @@ const WebcamDetection = () => {
     facingMode: "user"
   };
 
+  useEffect(() => {
+    const checkCameraPermission = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(track => track.stop());
+        setCameraReady(true);
+      } catch (err) {
+        console.error("Camera permission error:", err);
+        setCameraReady(false);
+        toast({
+          variant: "destructive",
+          title: "Camera Access Required",
+          description: "Please allow camera access in your browser settings and refresh the page.",
+        });
+      }
+    };
+
+    checkCameraPermission();
+  }, [toast]);
+
   const handleUserMedia = () => {
     setCameraReady(true);
     toast({
@@ -82,16 +102,22 @@ const WebcamDetection = () => {
   return (
     <div className="space-y-4">
       <div className="relative rounded-lg overflow-hidden bg-background/50 backdrop-blur-sm border border-gray-800">
-        <Webcam
-          ref={webcamRef}
-          audio={false}
-          screenshotFormat="image/jpeg"
-          videoConstraints={videoConstraints}
-          onUserMedia={handleUserMedia}
-          onUserMediaError={handleUserMediaError}
-          className="w-full aspect-video"
-          mirrored={true}
-        />
+        {isCameraReady ? (
+          <Webcam
+            ref={webcamRef}
+            audio={false}
+            screenshotFormat="image/jpeg"
+            videoConstraints={videoConstraints}
+            onUserMedia={handleUserMedia}
+            onUserMediaError={handleUserMediaError}
+            className="w-full aspect-video"
+            mirrored={true}
+          />
+        ) : (
+          <div className="w-full aspect-video bg-gray-900 flex items-center justify-center">
+            <p className="text-gray-400">Waiting for camera access...</p>
+          </div>
+        )}
         <div className="absolute bottom-4 right-4">
           <Button
             onClick={analyzeFrame}
@@ -110,8 +136,8 @@ const WebcamDetection = () => {
 
       {!isCameraReady && (
         <div className="text-center p-4 bg-secondary/50 rounded-lg">
-          <p className="text-gray-400">Waiting for camera access...</p>
-          <p className="text-sm text-gray-500 mt-2">Please allow camera permissions when prompted</p>
+          <p className="text-gray-400">Camera access is required</p>
+          <p className="text-sm text-gray-500 mt-2">Please allow camera permissions in your browser settings and refresh the page</p>
         </div>
       )}
 
