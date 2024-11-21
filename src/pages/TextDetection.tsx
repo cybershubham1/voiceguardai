@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertTriangle } from 'lucide-react';
+import { Loader2, AlertTriangle, ArrowLeft } from 'lucide-react';
 import ResultCard from '@/components/ResultCard';
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Link } from 'react-router-dom';
 
 const TextDetection = () => {
   const [text, setText] = useState('');
@@ -26,7 +27,12 @@ const TextDetection = () => {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Mock analysis result
-      const mockResult = {
+      const mockResult: {
+        type: 'authentic' | 'deepfake' | 'uncertain';
+        confidence: number;
+        details: string;
+        indicators: string[];
+      } = {
         type: Math.random() > 0.5 ? 'authentic' : 'deepfake',
         confidence: Math.floor(Math.random() * 30 + 70),
         details: "Our analysis has examined linguistic patterns, consistency, and writing style markers to determine the authenticity of this text.",
@@ -46,9 +52,17 @@ const TextDetection = () => {
     }
   };
 
+  const characterCount = text.length;
+  const minCharacters = 100;
+
   return (
     <div className="min-h-screen bg-background text-foreground py-12">
       <div className="max-w-4xl mx-auto px-4">
+        <Link to="/" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-8">
+          <ArrowLeft className="w-4 h-4" />
+          Back to Home
+        </Link>
+
         <Alert className="mb-8 border-yellow-500/50 bg-yellow-500/10">
           <AlertTriangle className="h-4 w-4 text-yellow-500" />
           <AlertDescription className="text-yellow-500">
@@ -58,23 +72,28 @@ const TextDetection = () => {
 
         <div className="space-y-6">
           <div className="text-center">
-            <h1 className="text-3xl font-bold mb-2">Text Analysis</h1>
+            <h1 className="text-3xl font-bold mb-2">AI Text Detection</h1>
             <p className="text-gray-400">
               Paste your text below to analyze for potential AI-generated content
             </p>
           </div>
 
           <div className="space-y-4">
-            <Textarea
-              placeholder="Paste your text here for analysis..."
-              className="min-h-[200px] bg-secondary/50 border-gray-700"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-            />
+            <div className="relative">
+              <Textarea
+                placeholder="Paste your text here (minimum 100 characters)..."
+                className="min-h-[200px] bg-secondary/50 border-gray-700 resize-none"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+              />
+              <div className="absolute bottom-2 right-2 text-sm text-gray-400">
+                {characterCount}/{minCharacters} characters
+              </div>
+            </div>
 
             <Button
               onClick={analyzeText}
-              disabled={isAnalyzing || !text.trim()}
+              disabled={isAnalyzing || characterCount < minCharacters}
               className="w-full"
             >
               {isAnalyzing ? (
