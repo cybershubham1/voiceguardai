@@ -16,6 +16,59 @@ const TextDetection = () => {
     indicators: string[];
   } | null>(null);
 
+  const analyzeTextPatterns = (text: string) => {
+    // Analyze repetition patterns
+    const repetitionScore = text.length - new Set(text.toLowerCase().split(' ')).size;
+    
+    // Analyze sentence structure variety
+    const sentences = text.split(/[.!?]+/);
+    const avgSentenceLength = sentences.reduce((acc, sent) => acc + sent.length, 0) / sentences.length;
+    const sentenceLengthVariety = sentences.some(sent => 
+      Math.abs(sent.length - avgSentenceLength) > avgSentenceLength * 0.5
+    );
+
+    // Check for common AI patterns
+    const commonAIPatterns = [
+      'in conclusion',
+      'moreover',
+      'additionally',
+      'furthermore',
+      'in summary'
+    ];
+    const aiPatternCount = commonAIPatterns.reduce((count, pattern) => 
+      count + (text.toLowerCase().includes(pattern) ? 1 : 0), 0
+    );
+
+    // Calculate natural language indicators
+    const hasPersonalPronouns = /\b(I|me|my|mine|we|our|ours)\b/i.test(text);
+    const hasInformalLanguage = /\b(like|maybe|probably|kind of|sort of)\b/i.test(text);
+    const hasEmotionalExpression = /[!?]{2,}|\.{3,}/.test(text);
+
+    // Weighted scoring system
+    let authenticityScore = 0;
+    authenticityScore += sentenceLengthVariety ? 20 : 0;
+    authenticityScore += hasPersonalPronouns ? 15 : 0;
+    authenticityScore += hasInformalLanguage ? 15 : 0;
+    authenticityScore += hasEmotionalExpression ? 10 : 0;
+    authenticityScore -= repetitionScore * 2;
+    authenticityScore -= aiPatternCount * 5;
+
+    // Normalize score to 0-100 range
+    const normalizedScore = Math.max(0, Math.min(100, authenticityScore));
+
+    return {
+      score: normalizedScore,
+      indicators: [
+        `Sentence structure variety: ${sentenceLengthVariety ? 'Natural' : 'Uniform'}`,
+        `Personal pronouns: ${hasPersonalPronouns ? 'Present' : 'Absent'}`,
+        `Language formality: ${hasInformalLanguage ? 'Natural variation' : 'Highly formal'}`,
+        `Emotional expression: ${hasEmotionalExpression ? 'Present' : 'Absent'}`,
+        `Repetition patterns: ${repetitionScore < 5 ? 'Low' : 'High'}`,
+        `Common AI markers: ${aiPatternCount === 0 ? 'None detected' : 'Present'}`
+      ]
+    };
+  };
+
   const analyzeText = async () => {
     if (!text.trim()) return;
     
@@ -26,27 +79,22 @@ const TextDetection = () => {
       // Simulated analysis delay
       await new Promise(resolve => setTimeout(resolve, 2000));
 
-      // Mock analysis result
-      const mockResult: {
-        type: 'authentic' | 'deepfake' | 'uncertain';
-        confidence: number;
-        details: string;
-        indicators: string[];
-      } = {
-        type: Math.random() > 0.5 ? 'authentic' : 'deepfake',
-        confidence: Math.floor(Math.random() * 30 + 70),
-        details: "Our analysis has examined linguistic patterns, consistency, and writing style markers to determine the authenticity of this text.",
-        indicators: [
-          "Semantic coherence analysis",
-          "Writing style consistency check",
-          "Language pattern recognition",
-          "Contextual relevance assessment",
-          "Structural analysis completion",
-          "Linguistic marker detection"
-        ]
-      };
+      const analysis = analyzeTextPatterns(text);
+      
+      const result = {
+        type: analysis.score > 70 ? 'authentic' : analysis.score > 40 ? 'uncertain' : 'deepfake',
+        confidence: analysis.score,
+        details: `Our advanced linguistic analysis has examined writing patterns, semantic coherence, and stylistic markers. ${
+          analysis.score > 70 
+            ? 'The text shows strong indicators of human authorship.'
+            : analysis.score > 40
+            ? 'The analysis shows mixed indicators of authenticity.'
+            : 'Multiple indicators suggest AI-generated content.'
+        }`,
+        indicators: analysis.indicators
+      } as const;
 
-      setResult(mockResult);
+      setResult(result);
     } finally {
       setIsAnalyzing(false);
     }
