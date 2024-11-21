@@ -13,48 +13,12 @@ const WebcamDetection = () => {
   const { toast } = useToast();
 
   const videoConstraints = {
-    width: 1280,
-    height: 720,
-    facingMode: "user",
-    aspectRatio: 1.777777778
+    width: 720,
+    height: 480,
+    facingMode: "user"
   };
 
-  useEffect(() => {
-    const initializeCamera = async () => {
-      try {
-        // Check if the browser supports getUserMedia
-        if (!navigator.mediaDevices?.getUserMedia) {
-          throw new Error("Browser doesn't support camera access");
-        }
-
-        // Request camera access
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-          video: videoConstraints,
-          audio: false 
-        });
-
-        // If we got here, we have camera access
-        console.log("Camera permission granted");
-        
-        // Cleanup stream on unmount
-        return () => {
-          stream.getTracks().forEach(track => track.stop());
-        };
-      } catch (err) {
-        console.error("Camera initialization error:", err);
-        toast({
-          variant: "destructive",
-          title: "Camera Error",
-          description: "Failed to access camera. Please ensure permissions are granted and refresh the page.",
-        });
-      }
-    };
-
-    initializeCamera();
-  }, [toast]);
-
   const handleUserMedia = () => {
-    console.log("Camera stream connected successfully");
     setCameraReady(true);
     toast({
       title: "Camera Connected",
@@ -125,7 +89,7 @@ const WebcamDetection = () => {
           videoConstraints={videoConstraints}
           onUserMedia={handleUserMedia}
           onUserMediaError={handleUserMediaError}
-          className="w-full h-full"
+          className="w-full aspect-video"
           mirrored={true}
         />
         <div className="absolute bottom-4 right-4">
