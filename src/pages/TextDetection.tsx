@@ -17,17 +17,19 @@ const TextDetection = () => {
   } | null>(null);
 
   const analyzeTextPatterns = (text: string) => {
-    // Analyze repetition patterns
-    const repetitionScore = text.length - new Set(text.toLowerCase().split(' ')).size;
+    // Analyze repetition patterns with improved tolerance
+    const words = text.toLowerCase().split(' ');
+    const uniqueWords = new Set(words);
+    const repetitionScore = (words.length - uniqueWords.size) / words.length;
     
-    // Analyze sentence structure variety
-    const sentences = text.split(/[.!?]+/);
-    const avgSentenceLength = sentences.reduce((acc, sent) => acc + sent.length, 0) / sentences.length;
+    // Analyze sentence structure variety with better thresholds
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim());
+    const avgSentenceLength = sentences.reduce((acc, sent) => acc + sent.trim().length, 0) / sentences.length;
     const sentenceLengthVariety = sentences.some(sent => 
-      Math.abs(sent.length - avgSentenceLength) > avgSentenceLength * 0.5
+      Math.abs(sent.trim().length - avgSentenceLength) > avgSentenceLength * 0.3
     );
 
-    // Check for common AI patterns
+    // Check for common AI patterns with reduced penalty
     const commonAIPatterns = [
       'in conclusion',
       'moreover',
@@ -39,19 +41,32 @@ const TextDetection = () => {
       count + (text.toLowerCase().includes(pattern) ? 1 : 0), 0
     );
 
-    // Calculate natural language indicators
-    const hasPersonalPronouns = /\b(I|me|my|mine|we|our|ours)\b/i.test(text);
-    const hasInformalLanguage = /\b(like|maybe|probably|kind of|sort of)\b/i.test(text);
-    const hasEmotionalExpression = /[!?]{2,}|\.{3,}/.test(text);
+    // Enhanced natural language indicators
+    const hasPersonalPronouns = /\b(I|me|my|mine|we|our|ours|you|your|yours)\b/i.test(text);
+    const hasInformalLanguage = /\b(like|maybe|probably|kind of|sort of|just|really|actually)\b/i.test(text);
+    const hasEmotionalExpression = /[!?]{2,}|\.{3,}|😊|😂|😅|🤔|😎/g.test(text);
+    const hasContractions = /\b(can't|won't|don't|I'm|you're|we're|they're|that's|it's|ain't)\b/i.test(text);
+    const hasNaturalTransitions = /\b(but|however|though|although|still|yet|anyway|besides)\b/i.test(text);
 
-    // Weighted scoring system
-    let authenticityScore = 0;
-    authenticityScore += sentenceLengthVariety ? 20 : 0;
-    authenticityScore += hasPersonalPronouns ? 15 : 0;
-    authenticityScore += hasInformalLanguage ? 15 : 0;
-    authenticityScore += hasEmotionalExpression ? 10 : 0;
-    authenticityScore -= repetitionScore * 2;
-    authenticityScore -= aiPatternCount * 5;
+    // Improved weighted scoring system
+    let authenticityScore = 50; // Start from neutral position
+    
+    // Positive indicators (human-like features)
+    authenticityScore += sentenceLengthVariety ? 15 : 0;
+    authenticityScore += hasPersonalPronouns ? 10 : 0;
+    authenticityScore += hasInformalLanguage ? 10 : 0;
+    authenticityScore += hasEmotionalExpression ? 8 : 0;
+    authenticityScore += hasContractions ? 8 : 0;
+    authenticityScore += hasNaturalTransitions ? 8 : 0;
+    
+    // Negative indicators (AI-like features)
+    authenticityScore -= repetitionScore * 15;
+    authenticityScore -= aiPatternCount * 3;
+    
+    // Length penalty for very short texts
+    if (text.length < 200) {
+      authenticityScore -= (200 - text.length) / 10;
+    }
 
     // Normalize score to 0-100 range
     const normalizedScore = Math.max(0, Math.min(100, authenticityScore));
@@ -59,12 +74,12 @@ const TextDetection = () => {
     return {
       score: normalizedScore,
       indicators: [
-        `Sentence structure variety: ${sentenceLengthVariety ? 'Natural' : 'Uniform'}`,
-        `Personal pronouns: ${hasPersonalPronouns ? 'Present' : 'Absent'}`,
-        `Language formality: ${hasInformalLanguage ? 'Natural variation' : 'Highly formal'}`,
-        `Emotional expression: ${hasEmotionalExpression ? 'Present' : 'Absent'}`,
-        `Repetition patterns: ${repetitionScore < 5 ? 'Low' : 'High'}`,
-        `Common AI markers: ${aiPatternCount === 0 ? 'None detected' : 'Present'}`
+        `Sentence variety: ${sentenceLengthVariety ? 'Natural variation detected' : 'Uniform structure detected'}`,
+        `Personal language: ${hasPersonalPronouns ? 'Personal pronouns present' : 'Impersonal tone detected'}`,
+        `Writing style: ${hasInformalLanguage || hasContractions ? 'Natural, conversational' : 'Formal, structured'}`,
+        `Expression: ${hasEmotionalExpression ? 'Natural emotional markers' : 'Neutral tone'}`,
+        `Flow: ${hasNaturalTransitions ? 'Natural transitions' : 'Mechanical transitions'}`,
+        `Repetition: ${repetitionScore < 0.2 ? 'Natural variation' : 'High repetition detected'}`
       ]
     };
   };
@@ -82,14 +97,14 @@ const TextDetection = () => {
       const analysis = analyzeTextPatterns(text);
       
       const result = {
-        type: analysis.score > 70 ? 'authentic' : analysis.score > 40 ? 'uncertain' : 'deepfake',
+        type: analysis.score > 65 ? 'authentic' : analysis.score > 35 ? 'uncertain' : 'deepfake',
         confidence: analysis.score,
         details: `Our advanced linguistic analysis has examined writing patterns, semantic coherence, and stylistic markers. ${
-          analysis.score > 70 
-            ? 'The text shows strong indicators of human authorship.'
-            : analysis.score > 40
-            ? 'The analysis shows mixed indicators of authenticity.'
-            : 'Multiple indicators suggest AI-generated content.'
+          analysis.score > 65 
+            ? 'The text shows strong indicators of human authorship with natural language patterns and variations.'
+            : analysis.score > 35
+            ? 'The analysis shows mixed indicators of authenticity. Some patterns suggest human writing while others are inconclusive.'
+            : 'Multiple indicators suggest AI-generated content, including uniform patterns and formal structure.'
         }`,
         indicators: analysis.indicators
       } as const;
