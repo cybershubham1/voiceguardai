@@ -29,16 +29,37 @@ const TextDetection = () => {
       Math.abs(sent.trim().length - avgSentenceLength) > avgSentenceLength * 0.3
     );
 
-    // Check for common AI patterns with reduced penalty
+    // Enhanced AI pattern detection
     const commonAIPatterns = [
       'in conclusion',
       'moreover',
       'additionally',
       'furthermore',
-      'in summary'
+      'in summary',
+      'as mentioned earlier',
+      'it is worth noting',
+      'it is important to note',
+      'in this context',
+      'with regards to',
+      'in terms of',
+      'nevertheless',
+      'consequently',
+      'thus',
+      'therefore'
     ];
+    
     const aiPatternCount = commonAIPatterns.reduce((count, pattern) => 
       count + (text.toLowerCase().includes(pattern) ? 1 : 0), 0
+    );
+
+    // Check for consistent formatting (common in AI)
+    const hasConsistentFormatting = sentences.every(sent => 
+      sent.trim()[0] === sent.trim()[0].toUpperCase()
+    );
+
+    // Check for perfect punctuation (common in AI)
+    const hasPerfectPunctuation = sentences.every(sent => 
+      /[.!?]$/.test(sent.trim())
     );
 
     // Enhanced natural language indicators
@@ -47,21 +68,29 @@ const TextDetection = () => {
     const hasEmotionalExpression = /[!?]{2,}|\.{3,}|😊|😂|😅|🤔|😎/g.test(text);
     const hasContractions = /\b(can't|won't|don't|I'm|you're|we're|they're|that's|it's|ain't)\b/i.test(text);
     const hasNaturalTransitions = /\b(but|however|though|although|still|yet|anyway|besides)\b/i.test(text);
+    
+    // Check for overly complex vocabulary (common in AI)
+    const complexWords = /\b(utilize|implement|facilitate|leverage|optimize|paradigm|methodology|subsequently|aforementioned)\b/gi;
+    const complexWordMatches = text.match(complexWords) || [];
+    const complexWordScore = complexWordMatches.length / words.length;
 
     // Improved weighted scoring system
     let authenticityScore = 50; // Start from neutral position
     
+    // Negative indicators (AI-like features)
+    authenticityScore -= repetitionScore * 20;
+    authenticityScore -= (aiPatternCount / commonAIPatterns.length) * 30;
+    authenticityScore -= hasConsistentFormatting ? 15 : 0;
+    authenticityScore -= hasPerfectPunctuation ? 15 : 0;
+    authenticityScore -= complexWordScore * 25;
+    
     // Positive indicators (human-like features)
     authenticityScore += sentenceLengthVariety ? 15 : 0;
-    authenticityScore += hasPersonalPronouns ? 10 : 0;
-    authenticityScore += hasInformalLanguage ? 10 : 0;
-    authenticityScore += hasEmotionalExpression ? 8 : 0;
-    authenticityScore += hasContractions ? 8 : 0;
+    authenticityScore += hasPersonalPronouns ? 12 : 0;
+    authenticityScore += hasInformalLanguage ? 12 : 0;
+    authenticityScore += hasEmotionalExpression ? 10 : 0;
+    authenticityScore += hasContractions ? 10 : 0;
     authenticityScore += hasNaturalTransitions ? 8 : 0;
-    
-    // Negative indicators (AI-like features)
-    authenticityScore -= repetitionScore * 15;
-    authenticityScore -= aiPatternCount * 3;
     
     // Length penalty for very short texts
     if (text.length < 200) {
@@ -74,12 +103,14 @@ const TextDetection = () => {
     return {
       score: normalizedScore,
       indicators: [
-        `Sentence variety: ${sentenceLengthVariety ? 'Natural variation detected' : 'Uniform structure detected'}`,
-        `Personal language: ${hasPersonalPronouns ? 'Personal pronouns present' : 'Impersonal tone detected'}`,
         `Writing style: ${hasInformalLanguage || hasContractions ? 'Natural, conversational' : 'Formal, structured'}`,
+        `Vocabulary: ${complexWordScore > 0.1 ? 'Complex, potentially AI-generated' : 'Natural word choice'}`,
+        `Formatting: ${hasConsistentFormatting ? 'Overly consistent (AI-like)' : 'Natural variation'}`,
         `Expression: ${hasEmotionalExpression ? 'Natural emotional markers' : 'Neutral tone'}`,
-        `Flow: ${hasNaturalTransitions ? 'Natural transitions' : 'Mechanical transitions'}`,
-        `Repetition: ${repetitionScore < 0.2 ? 'Natural variation' : 'High repetition detected'}`
+        `Transitions: ${hasNaturalTransitions ? 'Natural flow' : 'Mechanical transitions'}`,
+        `Personal voice: ${hasPersonalPronouns ? 'Personal perspective present' : 'Impersonal tone'}`,
+        `Sentence structure: ${sentenceLengthVariety ? 'Natural variation' : 'Uniform structure (AI-like)'}`,
+        `Common AI patterns: ${aiPatternCount > 3 ? 'High presence' : 'Low presence'} of formal academic phrases`
       ]
     };
   };
@@ -98,13 +129,13 @@ const TextDetection = () => {
       
       const result = {
         type: analysis.score > 65 ? 'authentic' : analysis.score > 35 ? 'uncertain' : 'deepfake',
-        confidence: analysis.score,
+        confidence: Math.round(Math.abs(analysis.score - 50) * 2),
         details: `Our advanced linguistic analysis has examined writing patterns, semantic coherence, and stylistic markers. ${
           analysis.score > 65 
             ? 'The text shows strong indicators of human authorship with natural language patterns and variations.'
             : analysis.score > 35
             ? 'The analysis shows mixed indicators of authenticity. Some patterns suggest human writing while others are inconclusive.'
-            : 'Multiple indicators suggest AI-generated content, including uniform patterns and formal structure.'
+            : 'Multiple indicators suggest AI-generated content, including uniform patterns, formal structure, and common AI writing patterns.'
         }`,
         indicators: analysis.indicators
       } as const;
