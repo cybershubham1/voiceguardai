@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, ShieldAlert, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Shield, ShieldAlert, AlertCircle, CheckCircle2, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ResultCardProps {
@@ -33,6 +33,10 @@ const ResultCard = ({ type, confidence, details, indicators, className }: Result
     }
   };
 
+  // Calculate percentages based on confidence
+  const aiPercentage = type === 'deepfake' ? confidence : 0;
+  const humanPercentage = type === 'authentic' ? confidence : 0;
+
   return (
     <div className={cn(
       'rounded-xl p-6 transition-all duration-300 border backdrop-blur-sm',
@@ -42,12 +46,18 @@ const ResultCard = ({ type, confidence, details, indicators, className }: Result
       <div className="flex items-start gap-4">
         {getIcon()}
         <div className="flex-1">
-          <h3 className="text-xl font-semibold capitalize flex items-center gap-2">
-            {type}
-            <span className="text-sm font-normal text-gray-400">
-              ({confidence}% confidence)
-            </span>
-          </h3>
+          <div className="flex justify-between items-start">
+            <h3 className="text-xl font-semibold capitalize flex items-center gap-2">
+              {type}
+              <span className="text-sm font-normal text-gray-400">
+                ({confidence}% confidence)
+              </span>
+            </h3>
+            <button className="flex items-center gap-2 text-sm text-primary hover:text-primary/80">
+              <Download className="w-4 h-4" />
+              Download report
+            </button>
+          </div>
           
           <div className="mt-4 mb-6">
             <div className="w-full bg-gray-800 rounded-full h-2.5">
@@ -58,6 +68,46 @@ const ResultCard = ({ type, confidence, details, indicators, className }: Result
                 )}
                 style={{ width: `${confidence}%` }}
               />
+            </div>
+          </div>
+
+          <div className="bg-background/50 rounded-lg p-4 mb-6">
+            <div className="text-3xl font-bold text-center mb-2">
+              {aiPercentage}%
+            </div>
+            <div className="text-sm text-center text-gray-400">
+              of text is likely AI-generated
+            </div>
+            
+            <div className="space-y-2 mt-4">
+              <div className="flex justify-between items-center text-sm">
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-danger" />
+                  AI-generated
+                </span>
+                <span>{aiPercentage}%</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-purple-500" />
+                  AI-generated & AI-refined
+                </span>
+                <span>0%</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-400" />
+                  Human-written & AI-refined
+                </span>
+                <span>0%</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-gray-400" />
+                  Human-written
+                </span>
+                <span>{humanPercentage}%</span>
+              </div>
             </div>
           </div>
 
