@@ -6,13 +6,13 @@ const analysisTypes = [
   {
     type: 'Audio',
     icon: Mic,
-    path: '/audio-detection',
+    path: '/',
     description: 'Advanced audio analysis detects voice manipulation, synthetic speech patterns, and inconsistencies in natural voice modulation. We examine frequency spectrums, background noise patterns, and acoustic signatures.'
   },
   {
     type: 'Video',
     icon: Video,
-    path: '/video-detection',
+    path: '/',
     description: 'Deep analysis of facial movements, lip-sync accuracy, and temporal consistency. We detect unnatural movements, lighting inconsistencies, and digital manipulation artifacts in video streams.'
   },
   {
@@ -24,7 +24,7 @@ const analysisTypes = [
   {
     type: 'Image',
     icon: Image,
-    path: '/image-detection',
+    path: '/',
     description: 'Advanced image analysis examines pixel-level patterns, metadata integrity, facial landmarks, and lighting consistency to detect digital manipulation and synthetic content generation.'
   }
 ];
