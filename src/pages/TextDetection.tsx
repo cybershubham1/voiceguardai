@@ -17,19 +17,16 @@ const TextDetection = () => {
   } | null>(null);
 
   const analyzeTextPatterns = (text: string) => {
-    // Analyze repetition patterns with improved tolerance
     const words = text.toLowerCase().split(' ');
     const uniqueWords = new Set(words);
     const repetitionScore = (words.length - uniqueWords.size) / words.length;
-    
-    // Analyze sentence structure variety with better thresholds
+
     const sentences = text.split(/[.!?]+/).filter(s => s.trim());
     const avgSentenceLength = sentences.reduce((acc, sent) => acc + sent.trim().length, 0) / sentences.length;
     const sentenceLengthVariety = sentences.some(sent => 
       Math.abs(sent.trim().length - avgSentenceLength) > avgSentenceLength * 0.3
     );
 
-    // Enhanced AI pattern detection
     const commonAIPatterns = [
       'in conclusion',
       'moreover',
@@ -52,39 +49,32 @@ const TextDetection = () => {
       count + (text.toLowerCase().includes(pattern) ? 1 : 0), 0
     );
 
-    // Check for consistent formatting (common in AI)
     const hasConsistentFormatting = sentences.every(sent => 
       sent.trim()[0] === sent.trim()[0].toUpperCase()
     );
 
-    // Check for perfect punctuation (common in AI)
     const hasPerfectPunctuation = sentences.every(sent => 
       /[.!?]$/.test(sent.trim())
     );
 
-    // Enhanced natural language indicators
     const hasPersonalPronouns = /\b(I|me|my|mine|we|our|ours|you|your|yours)\b/i.test(text);
     const hasInformalLanguage = /\b(like|maybe|probably|kind of|sort of|just|really|actually)\b/i.test(text);
     const hasEmotionalExpression = /[!?]{2,}|\.{3,}|😊|😂|😅|🤔|😎/g.test(text);
     const hasContractions = /\b(can't|won't|don't|I'm|you're|we're|they're|that's|it's|ain't)\b/i.test(text);
     const hasNaturalTransitions = /\b(but|however|though|although|still|yet|anyway|besides)\b/i.test(text);
     
-    // Check for overly complex vocabulary (common in AI)
     const complexWords = /\b(utilize|implement|facilitate|leverage|optimize|paradigm|methodology|subsequently|aforementioned)\b/gi;
     const complexWordMatches = text.match(complexWords) || [];
     const complexWordScore = complexWordMatches.length / words.length;
 
-    // Improved weighted scoring system
-    let authenticityScore = 50; // Start from neutral position
+    let authenticityScore = 50;
     
-    // Negative indicators (AI-like features)
     authenticityScore -= repetitionScore * 20;
     authenticityScore -= (aiPatternCount / commonAIPatterns.length) * 30;
     authenticityScore -= hasConsistentFormatting ? 15 : 0;
     authenticityScore -= hasPerfectPunctuation ? 15 : 0;
     authenticityScore -= complexWordScore * 25;
     
-    // Positive indicators (human-like features)
     authenticityScore += sentenceLengthVariety ? 15 : 0;
     authenticityScore += hasPersonalPronouns ? 12 : 0;
     authenticityScore += hasInformalLanguage ? 12 : 0;
@@ -92,12 +82,10 @@ const TextDetection = () => {
     authenticityScore += hasContractions ? 10 : 0;
     authenticityScore += hasNaturalTransitions ? 8 : 0;
     
-    // Length penalty for very short texts
     if (text.length < 200) {
       authenticityScore -= (200 - text.length) / 10;
     }
 
-    // Normalize score to 0-100 range
     const normalizedScore = Math.max(0, Math.min(100, authenticityScore));
 
     return {
@@ -122,7 +110,6 @@ const TextDetection = () => {
     setResult(null);
 
     try {
-      // Simulated analysis delay
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       const analysis = analyzeTextPatterns(text);
@@ -158,10 +145,12 @@ const TextDetection = () => {
         </Link>
 
         <Alert className="mb-8 border-yellow-500/50 bg-yellow-500/10">
-          <AlertTriangle className="h-4 w-4 text-yellow-500" />
-          <AlertDescription className="text-yellow-500">
-            This tool is currently in beta testing phase. Features and accuracy may be limited.
-          </AlertDescription>
+          <div className="w-full flex items-center justify-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-yellow-500" />
+            <AlertDescription className="text-yellow-500 text-center">
+              This tool is currently in beta testing phase. Features and accuracy may be limited.
+            </AlertDescription>
+          </div>
         </Alert>
 
         <div className="space-y-6">

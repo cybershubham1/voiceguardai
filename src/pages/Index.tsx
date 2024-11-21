@@ -107,10 +107,12 @@ const Index = () => {
         
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <Alert className="mb-8 border-yellow-500/50 bg-yellow-500/10">
-            <AlertTriangle className="h-4 w-4 text-yellow-500" />
-            <AlertDescription className="text-yellow-500">
-              This tool is currently in beta testing phase. Features and accuracy may be limited.
-            </AlertDescription>
+            <div className="w-full flex items-center justify-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-yellow-500" />
+              <AlertDescription className="text-yellow-500 text-center">
+                This tool is currently in beta testing phase. Features and accuracy may be limited.
+              </AlertDescription>
+            </div>
           </Alert>
 
           <div className="text-center mb-16">
