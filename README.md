@@ -4,6 +4,8 @@
 
 **URL**: https://lovable.dev/projects/9b42288f-7f91-42be-a409-83cfb3bd26d9
 
+⚠️ **BETA NOTICE**: This tool is currently in beta testing phase. Features and functionality may be limited.
+
 ## How can I edit this code?
 
 There are several ways of editing your application.
@@ -67,3 +69,4 @@ Simply open [Lovable](https://lovable.dev/projects/9b42288f-7f91-42be-a409-83cfb
 ## I want to use a custom domain - is that possible?
 
 We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+

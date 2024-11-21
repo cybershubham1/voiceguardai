@@ -6,7 +6,8 @@ import LiveDetection from '@/components/LiveDetection';
 import AnalysisTypes from '@/components/AnalysisTypes';
 import { useToast } from '@/components/ui/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Shield } from 'lucide-react';
+import { Loader2, Shield, AlertTriangle } from 'lucide-react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type DetectionResult = {
   type: 'authentic' | 'deepfake' | 'uncertain';
@@ -105,6 +106,13 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background" />
         
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <Alert className="mb-8 border-yellow-500/50 bg-yellow-500/10">
+            <AlertTriangle className="h-4 w-4 text-yellow-500" />
+            <AlertDescription className="text-yellow-500">
+              This tool is currently in beta testing phase. Features and accuracy may be limited.
+            </AlertDescription>
+          </Alert>
+
           <div className="text-center mb-16">
             <div className="flex items-center justify-center gap-3 mb-6">
               <Shield className="w-16 h-16 text-primary" />
@@ -161,6 +169,10 @@ const Index = () => {
                   <LiveDetection />
                 </TabsContent>
               </Tabs>
+            </div>
+
+            <div className="text-center p-4 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+              <p className="text-yellow-500 text-sm">⚠️ VOICEGUARDAI is currently in beta testing</p>
             </div>
 
             <AnalysisTypes />
