@@ -20,29 +20,37 @@ const WebcamDetection = () => {
   };
 
   useEffect(() => {
-    // Check if the browser supports getUserMedia
-    if (!navigator.mediaDevices?.getUserMedia) {
-      toast({
-        variant: "destructive",
-        title: "Browser Error",
-        description: "Your browser doesn't support camera access.",
-      });
-      return;
-    }
+    const initializeCamera = async () => {
+      try {
+        // Check if the browser supports getUserMedia
+        if (!navigator.mediaDevices?.getUserMedia) {
+          throw new Error("Browser doesn't support camera access");
+        }
 
-    // Request camera access on component mount
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(() => {
+        // Request camera access
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: videoConstraints,
+          audio: false 
+        });
+
+        // If we got here, we have camera access
         console.log("Camera permission granted");
-      })
-      .catch((err) => {
-        console.error("Camera permission error:", err);
+        
+        // Cleanup stream on unmount
+        return () => {
+          stream.getTracks().forEach(track => track.stop());
+        };
+      } catch (err) {
+        console.error("Camera initialization error:", err);
         toast({
           variant: "destructive",
           title: "Camera Error",
-          description: "Failed to access camera. Please ensure permissions are granted.",
+          description: "Failed to access camera. Please ensure permissions are granted and refresh the page.",
         });
-      });
+      }
+    };
+
+    initializeCamera();
   }, [toast]);
 
   const handleUserMedia = () => {
@@ -56,6 +64,7 @@ const WebcamDetection = () => {
 
   const handleUserMediaError = (err: string | DOMException) => {
     console.error("Camera error:", err);
+    setCameraReady(false);
     toast({
       variant: "destructive",
       title: "Camera Error",
@@ -151,6 +160,10 @@ const WebcamDetection = () => {
           className="animate-in fade-in duration-500"
         />
       )}
+
+      <div className="mt-8 text-center p-4 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+        <p className="text-yellow-500 text-sm">⚠️ This tool is under testing - Beta version</p>
+      </div>
     </div>
   );
 };
