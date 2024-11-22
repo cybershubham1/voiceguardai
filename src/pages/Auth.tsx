@@ -84,6 +84,12 @@ const AuthPage = () => {
                 anchor: {
                   color: 'hsl(var(--primary))',
                 },
+                label: {
+                  color: 'white',
+                },
+                text: {
+                  color: 'white',
+                },
               },
               className: {
                 button: 'hover:bg-primary hover:text-white transition-colors',
