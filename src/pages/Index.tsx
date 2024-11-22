@@ -6,8 +6,11 @@ import LiveDetection from '@/components/LiveDetection';
 import AnalysisTypes from '@/components/AnalysisTypes';
 import { useToast } from '@/components/ui/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Shield, AlertTriangle } from 'lucide-react';
+import { Loader2, Shield, AlertTriangle, LogOut } from 'lucide-react';
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from '@/components/ui/button';
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from 'react-router-dom';
 
 type DetectionResult = {
   type: 'authentic' | 'deepfake' | 'uncertain';
@@ -20,6 +23,12 @@ const Index = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<DetectionResult | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate('/auth');
+  };
 
   const analyzeContent = async (file: File) => {
     setIsAnalyzing(true);
@@ -106,14 +115,16 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-background" />
         
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <Alert className="mb-8 border-yellow-500/50 bg-yellow-500/10">
-            <div className="w-full flex items-center justify-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-yellow-500" />
-              <AlertDescription className="text-yellow-500 text-center">
-                This tool is currently in beta testing phase. Features and accuracy may be limited.
-              </AlertDescription>
-            </div>
-          </Alert>
+          <div className="absolute top-4 right-4">
+            <Button
+              variant="outline"
+              onClick={handleSignOut}
+              className="flex items-center gap-2"
+            >
+              <LogOut className="w-4 h-4" />
+              Sign Out
+            </Button>
+          </div>
 
           <div className="text-center mb-16">
             <div className="flex items-center justify-center gap-3 mb-6">
