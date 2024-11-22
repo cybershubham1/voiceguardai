@@ -16,11 +16,10 @@ const AuthPage = () => {
         if (event === 'SIGNED_IN' && session) {
           navigate("/");
         }
-        if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
+        if (event === 'SIGNED_OUT') {
           navigate("/auth");
         }
-        // Handle auth errors
-        if (event === 'PASSWORD_RECOVERY' || event === 'USER_UPDATED') {
+        if (event === 'PASSWORD_RECOVERY') {
           toast({
             title: "Success",
             description: "Your password has been updated successfully.",
@@ -30,7 +29,7 @@ const AuthPage = () => {
     );
 
     // Listen for auth errors
-    const authListener = supabase.auth.onAuthStateChange((event, session) => {
+    const authListener = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
         toast({
           variant: "destructive",
@@ -91,13 +90,6 @@ const AuthPage = () => {
               },
             }}
             providers={[]}
-            onError={(error) => {
-              toast({
-                variant: "destructive",
-                title: "Error",
-                description: error.message,
-              });
-            }}
           />
         </div>
       </div>
