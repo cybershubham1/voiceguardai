@@ -66,9 +66,9 @@ const AuthPage = () => {
               },
               style: {
                 button: {
-                  background: 'hsl(var(--primary))',
-                  color: 'white',
-                  borderRadius: '6px',
+                  backgroundColor: 'white',
+                  color: 'hsl(var(--primary))',
+                  border: '2px solid hsl(var(--primary))',
                 },
                 input: {
                   backgroundColor: 'white',
@@ -84,17 +84,9 @@ const AuthPage = () => {
                 anchor: {
                   color: 'hsl(var(--primary))',
                 },
-                container: {
-                  button: {
-                    backgroundColor: 'white',
-                    color: 'hsl(var(--primary))',
-                    border: '2px solid hsl(var(--primary))',
-                    '&:hover': {
-                      backgroundColor: 'hsl(var(--primary))',
-                      color: 'white',
-                    },
-                  },
-                },
+              },
+              className: {
+                button: 'hover:bg-primary hover:text-white transition-colors',
               },
             }}
             providers={[]}
