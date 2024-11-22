@@ -84,12 +84,8 @@ const AuthPage = () => {
               },
             }}
             providers={[]}
-            options={{
-              emailRedirectTo: `${window.location.origin}`,
-              metadata: {
-                full_name: undefined // Will be filled by user during signup
-              }
-            }}
+            redirectTo={`${window.location.origin}`}
+            magicLink={false}
           />
         </div>
       </div>
