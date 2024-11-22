@@ -99,14 +99,6 @@ const AuthPage = () => {
                   fontSize: '14px',
                   marginBottom: '8px',
                 },
-                // Add these new styles for links and text
-                text: {
-                  color: 'white',
-                },
-                link: {
-                  color: 'white',
-                  textDecoration: 'underline',
-                },
               },
               className: {
                 button: 'hover:bg-primary hover:border-primary transition-all duration-200',
