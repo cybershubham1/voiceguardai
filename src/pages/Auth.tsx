@@ -62,7 +62,7 @@ const AuthPage = () => {
               },
               style: {
                 anchor: {
-                  color: 'hsl(var(--primary))',
+                  color: 'white',
                 },
                 button: {
                   backgroundColor: 'rgba(255, 255, 255, 0.05)',
@@ -99,12 +99,21 @@ const AuthPage = () => {
                   fontSize: '14px',
                   marginBottom: '8px',
                 },
+                // Add these new styles for links and text
+                text: {
+                  color: 'white',
+                },
+                link: {
+                  color: 'white',
+                  textDecoration: 'underline',
+                },
               },
               className: {
                 button: 'hover:bg-primary hover:border-primary transition-all duration-200',
                 container: 'space-y-4',
                 label: 'font-medium',
                 input: 'focus:border-primary transition-colors duration-200',
+                anchor: 'text-white hover:text-primary transition-colors duration-200',
               },
             }}
             providers={[]}
