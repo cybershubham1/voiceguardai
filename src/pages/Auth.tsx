@@ -28,20 +28,8 @@ const AuthPage = () => {
       }
     );
 
-    // Listen for auth errors
-    const authListener = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT') {
-        toast({
-          variant: "destructive",
-          title: "Signed out",
-          description: "You have been signed out.",
-        });
-      }
-    });
-
     return () => {
       subscription.unsubscribe();
-      authListener.data.subscription.unsubscribe();
     };
   }, [navigate, toast]);
 
@@ -72,10 +60,16 @@ const AuthPage = () => {
                     brandAccent: 'hsl(var(--primary))',
                     inputBackground: 'white',
                     inputText: 'black',
+                    brandButtonText: "white",
                   },
                 },
               },
               style: {
+                button: {
+                  background: 'hsl(var(--primary))',
+                  color: 'white',
+                  borderRadius: '6px',
+                },
                 input: {
                   backgroundColor: 'white',
                   color: 'black',
@@ -90,6 +84,12 @@ const AuthPage = () => {
               },
             }}
             providers={[]}
+            options={{
+              emailRedirectTo: `${window.location.origin}`,
+              metadata: {
+                full_name: undefined // Will be filled by user during signup
+              }
+            }}
           />
         </div>
       </div>
