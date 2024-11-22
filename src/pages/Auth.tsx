@@ -124,7 +124,10 @@ const AuthPage = () => {
                 Your trusted partner in deepfake detection. Protect yourself from digital manipulation with real-time content verification.
               </p>
               <div className="mt-8 flex justify-center">
-                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary to-accent animate-pulse" />
+                <div className="relative w-32 h-32 flex items-center justify-center">
+                  <Shield className="w-24 h-24 text-primary animate-pulse" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-30 rounded-full animate-pulse" />
+                </div>
               </div>
             </div>
           </div>
