@@ -4,21 +4,47 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Shield } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const AuthPage = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (session) {
+      async (event, session) => {
+        if (event === 'SIGNED_IN' && session) {
           navigate("/");
+        }
+        if (event === 'USER_DELETED' || event === 'SIGNED_OUT') {
+          navigate("/auth");
+        }
+        // Handle auth errors
+        if (event === 'PASSWORD_RECOVERY' || event === 'USER_UPDATED') {
+          toast({
+            title: "Success",
+            description: "Your password has been updated successfully.",
+          });
         }
       }
     );
 
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    // Listen for auth errors
+    const authListener = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        toast({
+          variant: "destructive",
+          title: "Signed out",
+          description: "You have been signed out.",
+        });
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      authListener.data.subscription.unsubscribe();
+    };
+  }, [navigate, toast]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -45,11 +71,33 @@ const AuthPage = () => {
                   colors: {
                     brand: 'hsl(var(--primary))',
                     brandAccent: 'hsl(var(--primary))',
+                    inputBackground: 'white',
+                    inputText: 'black',
                   },
+                },
+              },
+              style: {
+                input: {
+                  backgroundColor: 'white',
+                  color: 'black',
+                },
+                message: {
+                  color: 'hsl(var(--destructive))',
+                  backgroundColor: 'hsl(var(--destructive) / 0.1)',
+                  padding: '8px',
+                  marginTop: '4px',
+                  borderRadius: '4px',
                 },
               },
             }}
             providers={[]}
+            onError={(error) => {
+              toast({
+                variant: "destructive",
+                title: "Error",
+                description: error.message,
+              });
+            }}
           />
         </div>
       </div>
