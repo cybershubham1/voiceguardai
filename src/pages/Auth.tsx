@@ -81,6 +81,20 @@ const AuthPage = () => {
                   marginTop: '4px',
                   borderRadius: '4px',
                 },
+                anchor: {
+                  color: 'hsl(var(--primary))',
+                },
+                container: {
+                  button: {
+                    backgroundColor: 'white',
+                    color: 'hsl(var(--primary))',
+                    border: '2px solid hsl(var(--primary))',
+                    '&:hover': {
+                      backgroundColor: 'hsl(var(--primary))',
+                      color: 'white',
+                    },
+                  },
+                },
               },
             }}
             providers={[]}
