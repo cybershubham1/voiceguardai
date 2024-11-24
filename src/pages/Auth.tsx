@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 const AuthPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const redirectUrl = 'https://voiceguardai.co'; // Replace with your production domain
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -109,7 +110,7 @@ const AuthPage = () => {
               },
             }}
             providers={[]}
-            redirectTo={`${window.location.origin}`}
+            redirectTo={redirectUrl}
             magicLink={false}
           />
         </div>
