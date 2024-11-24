@@ -12,32 +12,44 @@ export type Database = {
       detection_results: {
         Row: {
           analysis_details: Json | null
+          analysis_metadata: Json | null
           confidence_score: number
           created_at: string
+          detection_method: string | null
           file_url: string | null
           id: string
           is_deepfake: boolean
           media_type: string
+          model_version: string | null
+          processing_time: number | null
           user_id: string
         }
         Insert: {
           analysis_details?: Json | null
+          analysis_metadata?: Json | null
           confidence_score: number
           created_at?: string
+          detection_method?: string | null
           file_url?: string | null
           id?: string
           is_deepfake: boolean
           media_type: string
+          model_version?: string | null
+          processing_time?: number | null
           user_id: string
         }
         Update: {
           analysis_details?: Json | null
+          analysis_metadata?: Json | null
           confidence_score?: number
           created_at?: string
+          detection_method?: string | null
           file_url?: string | null
           id?: string
           is_deepfake?: boolean
           media_type?: string
+          model_version?: string | null
+          processing_time?: number | null
           user_id?: string
         }
         Relationships: []
