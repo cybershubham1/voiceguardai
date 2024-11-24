@@ -4,7 +4,7 @@ import { Upload, File, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
 import { analyzeContent } from '@/utils/detectionUtils';
-import { useAuth } from '@supabase/auth-helpers-react';
+import { useSession } from '@supabase/auth-helpers-react';
 
 interface FileUploadProps {
   onFileSelect: (file: File) => void;
@@ -14,10 +14,10 @@ interface FileUploadProps {
 const FileUpload = ({ onFileSelect, className }: FileUploadProps) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
-  const auth = useAuth();
+  const session = useSession();
 
   const handleFileAnalysis = async (file: File) => {
-    if (!auth?.user?.id) {
+    if (!session?.user?.id) {
       toast({
         variant: "destructive",
         title: "Authentication Required",
@@ -29,7 +29,7 @@ const FileUpload = ({ onFileSelect, className }: FileUploadProps) => {
     setIsAnalyzing(true);
     try {
       const mediaType = file.type.split('/')[0] as 'image' | 'video' | 'audio' | 'text';
-      const result = await analyzeContent(file, mediaType, auth.user.id);
+      const result = await analyzeContent(file, mediaType, session.user.id);
       
       onFileSelect(file);
       
