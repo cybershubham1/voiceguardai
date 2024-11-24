@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from '@/components/ui/button';
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from 'react-router-dom';
+import TrainingDataUpload from '@/components/TrainingDataUpload';
 
 type DetectionResult = {
   type: 'authentic' | 'deepfake' | 'uncertain';
@@ -142,9 +143,10 @@ const Index = () => {
           <div className="max-w-3xl mx-auto space-y-8">
             <div className="bg-secondary/50 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-gray-800">
               <Tabs defaultValue="upload" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-8">
+                <TabsList className="grid w-full grid-cols-3 mb-8">
                   <TabsTrigger value="upload">File Upload</TabsTrigger>
                   <TabsTrigger value="live">Live Detection</TabsTrigger>
+                  <TabsTrigger value="training">Training Data</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="upload">
@@ -180,6 +182,10 @@ const Index = () => {
                 
                 <TabsContent value="live">
                   <LiveDetection />
+                </TabsContent>
+
+                <TabsContent value="training">
+                  <TrainingDataUpload />
                 </TabsContent>
               </Tabs>
             </div>

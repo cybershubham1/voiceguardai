@@ -54,6 +54,39 @@ export type Database = {
         }
         Relationships: []
       }
+      model_versions: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean | null
+          media_type: string
+          metrics: Json
+          parameters: Json | null
+          training_completed: boolean | null
+          version: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          media_type: string
+          metrics?: Json
+          parameters?: Json | null
+          training_completed?: boolean | null
+          version: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          media_type?: string
+          metrics?: Json
+          parameters?: Json | null
+          training_completed?: boolean | null
+          version?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -84,6 +117,42 @@ export type Database = {
           id?: string
           updated_at?: string
           username?: string | null
+        }
+        Relationships: []
+      }
+      training_data: {
+        Row: {
+          created_at: string
+          features: Json | null
+          file_url: string | null
+          id: string
+          is_deepfake: boolean
+          media_type: string
+          metadata: Json | null
+          user_id: string
+          validation_status: string | null
+        }
+        Insert: {
+          created_at?: string
+          features?: Json | null
+          file_url?: string | null
+          id?: string
+          is_deepfake: boolean
+          media_type: string
+          metadata?: Json | null
+          user_id: string
+          validation_status?: string | null
+        }
+        Update: {
+          created_at?: string
+          features?: Json | null
+          file_url?: string | null
+          id?: string
+          is_deepfake?: boolean
+          media_type?: string
+          metadata?: Json | null
+          user_id?: string
+          validation_status?: string | null
         }
         Relationships: []
       }
